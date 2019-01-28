@@ -1,6 +1,8 @@
 Nakula: Twitter Reader and stream producer!
 ======
 
+This Project is to stream twitter timeline and parse it to Kafka Fronting. 
+
 Python Library Installation
 ------------
 The easiest way to install the latest version
