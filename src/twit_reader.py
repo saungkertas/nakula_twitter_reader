@@ -5,6 +5,8 @@ from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
 import os
+from kafka import KafkaProducer
+from kafka.errors import KafkaError
 
 # Go to http://apps.twitter.com and create an app.
 # The consumer key and secret will be generated for you after
@@ -18,7 +20,7 @@ except KeyError:
     print("Please set the environment variables for twitter credentials")
     sys.exit(1)
 
-consumer_secret = "DpK5eVqyXDN89OFPdYBMSQcXt5FIW60GpDcAUUOPWfM"
+producer = KafkaProducer(bootstrap_servers=['localhost:9092'])
 
 
 # After the step above, you will be redirected to your app's page.
@@ -29,6 +31,16 @@ class StdOutListener(StreamListener):
     """
 
     def on_data(self, data):
+        # Asynchronous by default
+        future = producer.send('hello-kafka', data)
+
+        # Block for 'synchronous' sends
+        try:
+            record_metadata = future.get(timeout=10)
+        except KafkaError:
+            # Decide what to do if produce request failed...
+            pass
+
         print(data)
         return True
 
